@@ -11,29 +11,6 @@ class Cube {
         this.imageUrl = imageUrl;
         this.difficulty = difficulty;
     }
-    saveCuve() {
-        const currentCube = {
-            id: this.id,
-            name: this.name,
-            description: this.description,
-            imageUrl: this.imageUrl,
-            difficulty: this.difficulty
-        }
-        fs.readFile(dbPath, (err, data) => {
-            err && console.error(err);
-            
-            const db = JSON.parse(data);
-            db.push(currentCube)
-
-            fs.writeFile(dbPath, JSON.stringify(db), err => {
-                if (err) {
-                    console.error(err);
-                }
-                console.log('Successfully added a new cube!');
-            });
-        })
-
-    }
 }
 
 module.exports = Cube;
