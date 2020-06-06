@@ -1,6 +1,7 @@
 const uniqid = require('uniqid');
 const fs = require('fs');
 const path = require('path');
+const dbPath = path.join(__dirname, '..', 'config/database.json');
 
 class Cube {
     constructor(name, description, imageUrl, difficulty) {
@@ -11,20 +12,27 @@ class Cube {
         this.difficulty = difficulty;
     }
     saveCuve() {
-        const data = {
-            id : this.id,
-            name : this.name,
-            description : this.description,
-            imageUrl : this.imageUrl,
-            difficulty : this.difficulty
+        const currentCube = {
+            id: this.id,
+            name: this.name,
+            description: this.description,
+            imageUrl: this.imageUrl,
+            difficulty: this.difficulty
         }
-        fs.writeFile(path.join(__dirname, '..', 'config/database.json'), JSON.stringify(data), err => {
-            if (err) {
-                console.error(err);
-                console.log('yes brah');
-            }
-            console.log('Successfully added a new cube!');
-        });
+        fs.readFile(dbPath, (err, data) => {
+            err && console.error(err);
+            
+            const db = JSON.parse(data);
+            db.push(currentCube)
+
+            fs.writeFile(dbPath, JSON.stringify(db), err => {
+                if (err) {
+                    console.error(err);
+                }
+                console.log('Successfully added a new cube!');
+            });
+        })
+
     }
 }
 
