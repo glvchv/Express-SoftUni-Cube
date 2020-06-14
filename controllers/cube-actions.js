@@ -8,7 +8,6 @@ const getAllCubes = async () => {
 
 const getCubeById = async (id) => {
     const currentCube = await Cube.findById(id).lean();
-    console.log('Actions = ', currentCube);
     return currentCube;
 }
 
@@ -26,8 +25,22 @@ const searchCube = async (search, from, to) => {
     return cubesFound;
 }
 
+const updateCube = async (cubeId, accessoryId) => {
+    return await Cube.findByIdAndUpdate(cubeId, {
+        $addToSet: {
+            accessories: [accessoryId]
+        }
+    }, {useFindAndModify: false})
+}
+
+const getCubeWithAccessories = async (id) => {
+    return await Cube.findById(id).populate('accessories').lean();
+}
+
 module.exports = {
     getAllCubes,
     getCubeById,
-    searchCube
+    searchCube,
+    updateCube,
+    getCubeWithAccessories
 }
