@@ -1,1 +1,25 @@
-[{"id":"15uz3yckb48mom8","name":"Cube 3x3","description":"The Rubik’s Cube Is All About Smart PlayThe Rubik’s Cube is all about smart play and is guaranteed to improve your muscle memory and hand eye ...","imageUrl":"https://www.rubiks.com/media/catalog/product/cache/9c57e2fe71f8a58f6afba681a0a15dd4/r/u/rubik-3x3-solved.jpg","difficulty":"1"},{"id":"15uz4gokb48q234","name":"Pot Shaped Cube Puzzle","description":"Feeling overconfident after solving that regular boring three by three Rubik cube thousand times? Give your brain a dosage of extra stress with this Pot Shaped Cube Puzzle that has the potential to ruffle your hair as if you have survived an electric shock!!","imageUrl":"https://thingsidesire.com/wp-content/uploads/2018/06/Pot-Shaped-Cube-Puzzle1.jpg","difficulty":"6"},{"id":"15uz36okb48rr8j","name":"3D Gear Mechanical Cube","description":"Test the zenith of your nerdiness through this mind-boggling Inside Out 3D Gear Mechanical Cube. Get a skeleton view of your beloved Rubik cube and see how magically it falls into place once you start moving it into different directions.","imageUrl":"https://thingsidesire.com/wp-content/uploads/2018/06/3D-Gear-Mechanical-Cube2-768x768.jpg","difficulty":"4"},{"id":"15uz3tckb48t71l","name":"Roulette Wheel IQ Rubik Cube","description":"Ready for your left and right brain training? This Roulette Wheel Rubik cube will be the hardest cube challenge in your cube solving journey. There are 6 color surface, 6 roulette wheels with numbers on it. To solve this cube firstly you may need to match each roulette color and sequence numbers and then each surface colors","imageUrl":"https://thingsidesire.com/wp-content/uploads/2018/06/Roulette-Wheel-IQ-Rubik-Cube3.jpg","difficulty":"6"}]
+[{
+    "id": "15uz3yckb48mom8",
+    "name": "Cube 3x3",
+    "description": "The Rubik’s Cube Is All About Smart PlayThe Rubik’s Cube is all about smart play and is guaranteed to improve your muscle memory and hand eye ...",
+    "imageUrl": "https://www.rubiks.com/media/catalog/product/cache/9c57e2fe71f8a58f6afba681a0a15dd4/r/u/rubik-3x3-solved.jpg",
+    "difficulty": "1"
+}, {
+    "id": "15uz4gokb48q234",
+    "name": "Pot Shaped Cube Puzzle",
+    "description": "Feeling overconfident after solving that regular boring three by three Rubik cube thousand times? Give your brain a dosage of extra stress with this Pot Shaped Cube Puzzle that has the potential to ruffle your hair as if you have survived an electric shock!!",
+    "imageUrl": "https://thingsidesire.com/wp-content/uploads/2018/06/Pot-Shaped-Cube-Puzzle1.jpg",
+    "difficulty": "6"
+}, {
+    "id": "15uz36okb48rr8j",
+    "name": "3D Gear Mechanical Cube",
+    "description": "Test the zenith of your nerdiness through this mind-boggling Inside Out 3D Gear Mechanical Cube. Get a skeleton view of your beloved Rubik cube and see how magically it falls into place once you start moving it into different directions.",
+    "imageUrl": "https://thingsidesire.com/wp-content/uploads/2018/06/3D-Gear-Mechanical-Cube2-768x768.jpg",
+    "difficulty": "4"
+}, {
+    "id": "15uz3tckb48t71l",
+    "name": "Roulette Wheel IQ Cube",
+    "description": "Ready for your left and right brain training? This Roulette Wheel Rubik cube will be the hardest cube challenge in your cube solving journey. There are 6 color surface, 6 roulette wheels with numbers on it. To solve this cube firstly you may need to match each roulette color and sequence numbers and then each surface colors",
+    "imageUrl": "https://thingsidesire.com/wp-content/uploads/2018/06/Roulette-Wheel-IQ-Rubik-Cube3.jpg",
+    "difficulty": "6"
+}]

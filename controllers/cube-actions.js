@@ -1,32 +1,33 @@
 const Cube = require('../models/cube');
-const fs = require('fs');
-const path = require('path');
-const dbPath = path.join(__dirname, '..', '/config/database.json');
 
-function getAllCubes() {
-    const data = fs.readFileSync(dbPath);
-    return JSON.parse(data)
-};
+const getAllCubes = async () => {
 
-function createCube(data) {
-    const allCubes = getAllCubes();
+    const cubes = await Cube.find().lean();
+    return cubes;
+}
 
-    const { name, description, imageUrl, difficultyLevel } = data;
-    const newCube = new Cube(name, description, imageUrl, difficultyLevel);
-    allCubes.push(newCube);
-
-    fs.writeFileSync(dbPath, JSON.stringify(allCubes));
-    console.log('Successfuly added a cube!');
-};
-
-function getCubeById(id) {
-    const allCubes = getAllCubes();
-    const currentCube = allCubes.find(cube => cube.id === id);
+const getCubeById = async (id) => {
+    const currentCube = await Cube.findById(id).lean();
+    console.log('Actions = ', currentCube);
     return currentCube;
+}
+
+const searchCube = async (search, from, to) => {
+    console.log(search, from, to);
+    const allCubes = await getAllCubes();
+    if (from === '' & to === '') {
+        from = 1;
+        to = 6;
+    }
+    const cubesFound = allCubes.filter(cube => {
+        return cube.name.toLowerCase().includes(search) && cube.difficulty >= from
+        && cube.difficulty <= to
+    });
+    return cubesFound;
 }
 
 module.exports = {
     getAllCubes,
-    createCube,
-    getCubeById
+    getCubeById,
+    searchCube
 }
