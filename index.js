@@ -15,7 +15,7 @@ mongoose.connect(config.connectionUrl,{
     }
 
     console.log("Database is up and running...");
-})
+});
 
 require('./config/express')(app);
 require('./config/routes')(app);

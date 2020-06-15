@@ -140,6 +140,14 @@ module.exports = (app) => {
         await attachAccessoryToCube(req.body.accessory, cubeId);
         
         res.redirect(`/details/${cubeId}`)
+    });
+
+    app.get('/login', (req, res) => {
+        res.render('loginPage');
+    });
+
+    app.get('/register', (req, res) => {
+        res.render('registerPage')
     })
 
     app.get('*', (req, res) => {
