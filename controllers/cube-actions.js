@@ -12,7 +12,6 @@ const getCubeById = async (id) => {
 }
 
 const searchCube = async (search, from, to) => {
-    console.log(search, from, to);
     const allCubes = await getAllCubes();
     if (from === '' & to === '') {
         from = 1;

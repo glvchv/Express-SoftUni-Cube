@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const imageValidation = /(http|https):(\/\/).*/;
 
 const CubeSchema = mongoose.Schema({
     name: {
@@ -13,7 +14,7 @@ const CubeSchema = mongoose.Schema({
     imageUrl: {
         type: String,
         required: true,
-        validate: /(http|https):(\/\/).*/
+        validate: imageValidation
     },
     difficulty: {
         type: Number,
