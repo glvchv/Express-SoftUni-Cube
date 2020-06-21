@@ -2,7 +2,12 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const privateKey = 'CUBICLE_WORKSHOP'
+const privateKey = 'CUBICLE_WORKSHOP';
+
+const generateJWT = (userId, username) => {
+    const token = jwt.sign({userId, username}, privateKey);
+    return token;
+}
 
 const registerUser = async (req, res) => {
     const {
@@ -23,7 +28,7 @@ const registerUser = async (req, res) => {
 
     const userInfo = await user.save();
     
-    const token = jwt.sign({userId: userInfo._id, username: userInfo.username}, privateKey);
+    const token = generateJWT(userInfo._id, username);
     res.cookie('aid', token);
     res.redirect('/');
 };
@@ -43,7 +48,7 @@ const verifyUserInfo = async (req, res) => {
         console.log('Invalid password!');
     };
 
-    const token = jwt.sign({userId: user._id, username}, privateKey);
+    const token = generateJWT(user._id, username);
     res.cookie('aid', token);
     return status;
 }
