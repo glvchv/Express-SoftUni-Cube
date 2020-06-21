@@ -27,7 +27,7 @@ const CubeSchema = mongoose.Schema({
         ref: 'Accessory',
     }],
     creatorId: {
-        type: String,
+        type: "ObjectId",
         required: true
     }
 })
