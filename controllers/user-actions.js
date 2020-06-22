@@ -1,6 +1,7 @@
 const env = process.env.NODE_ENV || 'development';
 
 const User = require('../models/user');
+const Cube = require('../models/cube');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config')[env];
@@ -79,9 +80,43 @@ const guestAccess = (req, res, next) => {
     }
 };
 
+const checkUserStatus = (req, res, next) => {
+    const token = req.cookies['aid'];
+    if (!token) {
+        req.isLogged = false;
+    }
+
+    try {
+        jwt.verify(token, config.privateKey);
+        req.isLogged = true;
+    } catch (error) {
+        req.isLogged = false;
+    };
+
+    next();
+};
+
+const checkIfAuth = async (req, res, next) => {
+    const cube = await Cube.findById(req.params.id,);
+    const token = req.cookies['aid'];
+    const userObject = jwt.verify(token, config.privateKey);
+
+   userObject.userId == cube.creatorId ? req.isAuth = true : req.isAuth = false;
+   next();
+
+};
+
+const logoutUser = (req, res) => {
+    res.clearCookie('aid');
+    res.redirect('/');
+};
+
 module.exports = {
     registerUser,
     verifyUserInfo,
     authAccess,
-    guestAccess
+    guestAccess,
+    checkUserStatus,
+    logoutUser,
+    checkIfAuth
 };

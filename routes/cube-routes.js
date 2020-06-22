@@ -10,20 +10,22 @@ const {
     searchCube,
     getCubeWithAccessories,
     updateCube,
+    editCube
 } = require('../controllers/cube-actions');
 const {
     getAccessoryById,
     attachAccessoryToCube,
     showAvailableAccessories
 } = require('../controllers/accessory-actions');
-const { authAccess } = require('../controllers/user-actions');
+const { authAccess, checkUserStatus, checkIfAuth } = require('../controllers/user-actions');
 
 const router = express.Router();
 
 
-router.get('/create', authAccess, (req, res) => {
+router.get('/create', authAccess, checkUserStatus, (req, res) => {
     res.render('create', {
-        title: 'Cubicle | Create Cube'
+        title: 'Cubicle | Create Cube',
+        isLogged: req.isLogged
     });
 });
 
@@ -55,21 +57,26 @@ router.post('/create', authAccess, (req, res) => {
 
 });
 
-router.get('/details/:id', async (req, res) => {
+router.get('/details/:id', checkUserStatus, checkIfAuth, async (req, res) => {
     const cube = await getCubeById(req.params.id);
     const accessoriesIds = cube.accessories;
     const accessoriesObjects = [];
+
     for await (let acc of accessoriesIds) {
-        accessoriesObjects.push(await getAccessoryById(acc))
-    }
+        accessoriesObjects.push(await getAccessoryById(acc));
+    };
+
     cube.accessories = accessoriesObjects;
+
     res.render('details', {
         title: 'Cubicle | Cube Details',
-        ...cube
+        ...cube,
+        isLogged: req.isLogged,
+        isAuth: req.isAuth
     });
 });
 
-router.post('/search', async (req, res) => {
+router.post('/search', checkUserStatus, async (req, res) => {
     const {
         search,
         from,
@@ -77,12 +84,13 @@ router.post('/search', async (req, res) => {
     } = req.body;
     const cubes = await searchCube(search, from, to);
     res.render('index', {
-        cubes
+        cubes,
+        isLogged: req.isLogged
     })
 
 });
 
-router.get('/attach/accessory/:id', authAccess, async (req, res) => {
+router.get('/attach/accessory/:id', authAccess, checkUserStatus, async (req, res) => {
     const cube = await getCubeWithAccessories(req.params.id);
     let areNotAttachable = false;
 
@@ -94,11 +102,12 @@ router.get('/attach/accessory/:id', authAccess, async (req, res) => {
         title: 'Cubicle | Attach Accessory',
         ...cube,
         areNotAttachable,
-        availableAccessories
+        availableAccessories,
+        isLogged: req.isLogged
     })
 });
 
-router.post('/attach/accessory/:id', authAccess, async (req, res) => {
+router.post('/attach/accessory/:id', authAccess, checkUserStatus, async (req, res) => {
     const cubeId = req.params.id;
 
     await updateCube(cubeId, req.body.accessory);
@@ -107,12 +116,40 @@ router.post('/attach/accessory/:id', authAccess, async (req, res) => {
     res.redirect(`/details/${cubeId}`)
 });
 
-router.get('/edit/:id', (req, res) => {
-    res.render('editCubePage');
-});
+router.get('/edit/:id', checkUserStatus, async (req, res) => {
+    const cube = await Cube.findById(req.params.id).lean();
 
-router.get('/delete/:id', (req, res) => {
-    res.render('deleteCubePage');
+    res.render('editCubePage', {
+        isLogged: req.isLogged,
+        ...cube
+    });
+});
+router.post('/edit/:id', async (req, res) => {
+    await editCube(req.params.id, req.body);
+    res.redirect(`/details/${req.params.id}`);
 })
+
+router.get('/delete/:id', checkUserStatus, async (req, res) => {
+    const cube = await Cube.findById(req.params.id).lean();
+    const {difficulty} = cube;
+    const values = {
+        1: '1 - Very Easy',
+        2: '2 - Easy',
+        3: '3 - Medium (Standard 3x3)',
+        4: '4 - Intermediate',
+        5: '5 - Expert',
+        6: '6 - Hardcore'
+    };
+
+    res.render('deleteCubePage', {
+        ...cube,
+        isLogged: req.isLogged,
+        value: values[difficulty]
+    });
+});
+router.post('/delete/:id', async (req, res) => {
+    await Cube.deleteOne({"_id": req.params.id});
+    res.redirect('/');
+});
 
 module.exports = router;

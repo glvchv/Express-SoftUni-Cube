@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, verifyUserInfo } = require('../controllers/user-actions');
+const { registerUser, verifyUserInfo, logoutUser } = require('../controllers/user-actions');
 const { guestAccess } = require('../controllers/user-actions');
 
 router.get('/login', guestAccess, (req, res) => {
@@ -22,6 +22,10 @@ router.get('/register', guestAccess, (req, res) => {
 });
 router.post('/register', guestAccess, async (req, res) => {
     const status = await registerUser(req, res);
+});
+
+router.get('/logout', (req, res) => {
+    logoutUser(req, res);
 });
 
 module.exports = router;

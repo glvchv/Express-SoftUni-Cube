@@ -2,20 +2,23 @@ const express = require('express');
 const {
     getAllCubes
 } = require('../controllers/cube-actions');
+const { checkUserStatus } = require('../controllers/user-actions');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', checkUserStatus, async (req, res) => {
 
     const cubes = await getAllCubes();
     res.render('index', {
         title: 'Cubicle | Browse',
-        cubes
+        cubes,
+        isLogged: req.isLogged
     });
 });
 
-router.get('/about', (req, res) => {
+router.get('/about', checkUserStatus, (req, res) => {
     res.render('about', {
-        title: 'Cubicle | About'
+        title: 'Cubicle | About',
+        isLogged: req.isLogged
     });
 });
 
