@@ -1,39 +1,49 @@
+const env = process.env.NODE_ENV || 'development';
+
 const express = require('express');
 const Cube = require('../models/cube');
+const jwt = require('jsonwebtoken');
+const config = require('../config/config')[env];
+
 const {
     getCubeById,
     searchCube,
     getCubeWithAccessories,
-    updateCube
+    updateCube,
 } = require('../controllers/cube-actions');
 const {
     getAccessoryById,
     attachAccessoryToCube,
     showAvailableAccessories
 } = require('../controllers/accessory-actions');
+const { authAccess } = require('../controllers/user-actions');
 
 const router = express.Router();
 
 
-router.get('/create', (req, res) => {
+router.get('/create', authAccess, (req, res) => {
     res.render('create', {
         title: 'Cubicle | Create Cube'
     });
 });
 
-router.post('/create', (req, res) => {
+router.post('/create', authAccess, (req, res) => {
     const {
         name,
         description,
         imageUrl,
         difficultyLevel
     } = req.body;
+    const token = req.cookies['aid'];
+    
+    const decodedObj = jwt.verify(token, config.privateKey);
 
     const cube = new Cube({
         name,
         description,
         imageUrl,
-        difficulty: difficultyLevel
+        difficulty: difficultyLevel,
+        creatorId: decodedObj.userId
     });
     cube.save((err) => {
         if (err) {
@@ -72,7 +82,7 @@ router.post('/search', async (req, res) => {
 
 });
 
-router.get('/attach/accessory/:id', async (req, res) => {
+router.get('/attach/accessory/:id', authAccess, async (req, res) => {
     const cube = await getCubeWithAccessories(req.params.id);
     let areNotAttachable = false;
 
@@ -88,7 +98,7 @@ router.get('/attach/accessory/:id', async (req, res) => {
     })
 });
 
-router.post('/attach/accessory/:id', async (req, res) => {
+router.post('/attach/accessory/:id', authAccess, async (req, res) => {
     const cubeId = req.params.id;
 
     await updateCube(cubeId, req.body.accessory);

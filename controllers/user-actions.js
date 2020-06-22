@@ -1,11 +1,12 @@
+const env = process.env.NODE_ENV || 'development';
+
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const privateKey = 'CUBICLE_WORKSHOP';
+const config = require('../config/config')[env];
 
 const generateJWT = (userId, username) => {
-    const token = jwt.sign({userId, username}, privateKey);
+    const token = jwt.sign({userId, username}, config.privateKey);
     return token;
 }
 
@@ -51,9 +52,36 @@ const verifyUserInfo = async (req, res) => {
     const token = generateJWT(user._id, username);
     res.cookie('aid', token);
     return status;
-}
+};
+
+const authAccess = (req, res, next) => {
+
+    const token = req.cookies['aid'];
+    if (!token) {
+        res.redirect('/login');
+    }
+    const userObject = jwt.verify(token, config.privateKey);
+
+    if (userObject) {
+        next()
+    } else {
+        res.redirect('/login');
+    }
+
+};
+
+const guestAccess = (req, res, next) => {
+    const token = req.cookies['aid'];
+    if (token) {
+        res.redirect('/');
+    } else {
+        next();
+    }
+};
 
 module.exports = {
     registerUser,
-    verifyUserInfo
+    verifyUserInfo,
+    authAccess,
+    guestAccess
 };

@@ -1,15 +1,16 @@
 const express = require('express');
 const Accessory = require('../models/accessory');
 const router = express.Router();
+const { authAccess } = require('../controllers/user-actions');
 
 
-router.get('/create/accessory', (req, res) => {
+router.get('/create/accessory', authAccess, (req, res) => {
     res.render('createAccessory', {
         title: 'Cubicle | Add Accessory'
     });
 });
 
-router.post('/create/accessory', (req, res) => {
+router.post('/create/accessory', authAccess, (req, res) => {
     const {
         name,
         imageUrl,
