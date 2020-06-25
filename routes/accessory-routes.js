@@ -1,7 +1,10 @@
 const express = require('express');
 const Accessory = require('../models/accessory');
 const router = express.Router();
-const { authAccess, checkUserStatus } = require('../controllers/user-actions');
+const {
+    authAccess,
+    checkUserStatus
+} = require('../controllers/user-actions');
 
 
 router.get('/create/accessory', authAccess, checkUserStatus, (req, res) => {
@@ -11,7 +14,7 @@ router.get('/create/accessory', authAccess, checkUserStatus, (req, res) => {
     });
 });
 
-router.post('/create/accessory', authAccess, (req, res) => {
+router.post('/create/accessory', authAccess, async (req, res) => {
     const {
         name,
         imageUrl,
@@ -22,13 +25,20 @@ router.post('/create/accessory', authAccess, (req, res) => {
         imageUrl,
         description
     });
-    accessory.save((err) => {
-        if (err) {
-            console.error(err);
-        }
-    })
 
-    res.redirect('/create/accessory');
+    try {
+        await accessory.save();
+        res.render('createAccessory', {
+            title: 'Cubicle | Create Accessory',
+            isLogged: req.isLogged
+        });
+    } catch (err) {
+        res.render('createAccessory', {
+            title: 'Cubicle | Create Accessory',
+            isLogged: req.isLogged,
+            error: 'Accessory\'s input is not valid!'
+        });
+    };
 });
 
 module.exports = router;

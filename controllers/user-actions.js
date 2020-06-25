@@ -135,7 +135,7 @@ const checkIfAuth = async (req, res, next) => {
         userObject.userId == cube.creatorId ? req.isAuth = true : req.isAuth = false;
         next();
     } catch (err) {
-
+        return err;
     }
 
 };

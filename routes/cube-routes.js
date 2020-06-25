@@ -29,7 +29,7 @@ router.get('/create', authAccess, checkUserStatus, (req, res) => {
     });
 });
 
-router.post('/create', authAccess, (req, res) => {
+router.post('/create', authAccess, async (req, res) => {
     const {
         name,
         description,
@@ -47,18 +47,22 @@ router.post('/create', authAccess, (req, res) => {
         difficulty: difficultyLevel,
         creatorId: decodedObj.userId
     });
-    cube.save((err) => {
-        if (err) {
-            console.error(err);
-            res.redirect('/create');
-        }
-        res.redirect('/');
-    })
+    try {
+        await cube.save();
+    } catch(err) {
+        res.render('create', {
+            title: 'Cubicle | Create Cube',
+            isLogged: req.isLogged,
+            error: 'Cube\'s input is not valid!'
+        });
+    };
+    
 
 });
 
 router.get('/details/:id', checkUserStatus, checkIfAuth, async (req, res) => {
     const cube = await getCubeById(req.params.id);
+
     const accessoriesIds = cube.accessories;
     const accessoriesObjects = [];
 
