@@ -7,19 +7,27 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config')[env];
 
 const generateJWT = (userId, username) => {
-    const token = jwt.sign({userId, username}, config.privateKey);
+    const token = jwt.sign({
+        userId,
+        username
+    }, config.privateKey);
     return token;
 }
 
 const registerUser = async (req, res) => {
     const {
         username,
-        password, 
+        password,
         repeatPassword
     } = req.body;
+
     if (password !== repeatPassword) {
-        throw new Error('Passwords do not match!');
-    }
+        return {
+            error: true,
+            message: 'Passwords must be the same!'
+        };
+    };
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -27,39 +35,61 @@ const registerUser = async (req, res) => {
         username,
         password: hashedPassword
     });
+    try {
+        const userInfo = await user.save();
 
-    const userInfo = await user.save();
-    
-    const token = generateJWT(userInfo._id, username);
-    res.cookie('aid', token);
-    res.redirect('/');
+        const token = generateJWT(userInfo._id, username);
+        res.cookie('aid', token);
+        res.redirect('/');
+    } catch (err) {
+        return {
+            error: true,
+            message: err
+        };
+    };
 };
 
 const verifyUserInfo = async (req, res) => {
-    const { username, password } = req.body;
+    const {
+        username,
+        password
+    } = req.body;
+    try {
+        const user = await User.findOne({
+            username
+        });
 
-    const user = await User.findOne({
-        username
-    });
+        if (!user) {
+            return {
+                error: true,
+                message: 'No user registered with this username!'
+            }
+        };
+        const status = await bcrypt.compare(password, user.password);
 
-    if (!user) {
-        console.log('No such user registered!');
+        if (!status) {
+            return {
+                error: true,
+                message: 'Password or username incorrect!'
+            };
+        };
+
+        const token = generateJWT(user._id, username);
+        res.cookie('aid', token);
+        return status;
+    } catch (err) {
+        return {
+            error: true,
+            message: err
+        };
     };
-    const status = await bcrypt.compare(password, user.password);
-    if (!status) {
-        console.log('Invalid password!');
-    };
-
-    const token = generateJWT(user._id, username);
-    res.cookie('aid', token);
-    return status;
 };
 
 const authAccess = (req, res, next) => {
 
     const token = req.cookies['aid'];
     if (!token) {
-        res.redirect('/login');
+        return res.redirect('/login');
     }
     const userObject = jwt.verify(token, config.privateKey);
 
@@ -74,7 +104,7 @@ const authAccess = (req, res, next) => {
 const guestAccess = (req, res, next) => {
     const token = req.cookies['aid'];
     if (token) {
-        res.redirect('/');
+        return res.redirect('/');
     } else {
         next();
     }
@@ -97,12 +127,16 @@ const checkUserStatus = (req, res, next) => {
 };
 
 const checkIfAuth = async (req, res, next) => {
-    const cube = await Cube.findById(req.params.id,);
-    const token = req.cookies['aid'];
-    const userObject = jwt.verify(token, config.privateKey);
+    try {
+        const cube = await Cube.findById(req.params.id, );
+        const token = req.cookies['aid'];
+        const userObject = jwt.verify(token, config.privateKey);
 
-   userObject.userId == cube.creatorId ? req.isAuth = true : req.isAuth = false;
-   next();
+        userObject.userId == cube.creatorId ? req.isAuth = true : req.isAuth = false;
+        next();
+    } catch (err) {
+
+    }
 
 };
 
